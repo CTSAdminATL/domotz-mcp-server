@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "domotz": {
+      "command": "node",
+      "args": ["REPLACE_WITH_FULL_PATH_TO/domotz-mcp-server/index.js"],
+      "env": {
+        "DOMOTZ_API_KEY": "YOUR_API_KEY_HERE",
+        "DOMOTZ_API_BASE_URL": "https://api-us-east-1-cell-1.domotz.com/public-api/v1"
+      }
+    }
+  }
+}
