@@ -39,7 +39,7 @@ Before you begin, ensure you have:
 Clone or download this repository to your local machine:
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/domotz-mcp-server.git
+git clone https://github.com/jacedomotz/domotz-mcp-server.git
 cd domotz-mcp-server
 ```
 
