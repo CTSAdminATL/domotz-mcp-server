@@ -41,7 +41,7 @@ export const tools = [
   }
 ];
 
-const SUMMARY_LIMIT = parseInt(process.env.DOMOTZ_SUMMARY_LIMIT || '50', 10);
+const SUMMARY_LIMIT = parseInt(process.env.DOMOTZ_SUMMARY_LIMIT || '500', 10);
 
 function summarize(data) {
   if (Array.isArray(data) && data.length > SUMMARY_LIMIT) {
