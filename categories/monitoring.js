@@ -7,26 +7,35 @@ ACTION REFERENCE:
 - create_snmp: Create an SNMP sensor (needs body with OID config)
 - delete_snmp: Delete an SNMP sensor (needs sensor_id)
 - snmp_history: SNMP sensor value history over time (needs sensor_id, filterable by from/to)
-- snmp_trigger_functions: List available trigger functions for an SNMP sensor (needs sensor_id)
+- snmp_trigger_functions: List available trigger functions for an SNMP sensor (needs sensor_id) — call this FIRST to get valid function_id values
 - list_snmp_triggers: List triggers configured on an SNMP sensor (needs sensor_id)
-- create_snmp_trigger: Create a trigger on an SNMP sensor (needs sensor_id + body)
+- create_snmp_trigger: Create a trigger on an SNMP sensor (needs sensor_id + body with function_id and value)
 - delete_snmp_trigger: Delete a trigger (needs sensor_id + trigger_id)
-- create_snmp_trigger_alert: Bind an alert medium to a trigger (needs sensor_id + trigger_id + medium_name e.g. "email", "slack")
-- delete_snmp_trigger_alert: Remove alert medium from trigger (needs sensor_id + trigger_id + medium_name)
+- create_snmp_trigger_alert: Activate alert notifications on a trigger (needs sensor_id + trigger_id + medium_name e.g. "email", "slack")
+- delete_snmp_trigger_alert: Remove alert notifications from a trigger (needs sensor_id + trigger_id + medium_name)
 - list_tcp: List TCP sensors on a device
 - create_tcp: Create a TCP sensor (needs body with port/host config)
 - delete_tcp: Delete a TCP sensor (needs service_id)
 
+TRIGGER WORKFLOW (must follow these steps in order):
+1. Call snmp_trigger_functions to get available function_ids (e.g. function_id=2 means "is greater than")
+2. Call create_snmp_trigger with body containing function_id and value — VERIFY the response contains the created trigger before proceeding
+3. Call create_snmp_trigger_alert with the trigger_id from step 2 to activate notifications — VERIFY the response confirms activation
+If ANY step returns an error, STOP and report the error to the user. Do NOT claim success without confirming each step's response.
+
 GOTCHAS:
 - SNMP sensors and TCP sensors use different ID params: sensor_id for SNMP, service_id for TCP
-- Trigger workflow: first list_snmp -> get sensor_id -> snmp_trigger_functions to see what's available -> create_snmp_trigger -> create_snmp_trigger_alert to get notifications
+- Trigger creation requires a valid function_id from snmp_trigger_functions — do not guess function_ids
 - from/to on snmp_history accept ISO 8601 timestamps, default to last 7 days
+- TCP sensors do NOT support triggers or alerts
 
 EXAMPLES:
 - List SNMP sensors: {"action": "list_snmp", "agent_id": 5, "device_id": 50}
 - Sensor history: {"action": "snmp_history", "agent_id": 5, "device_id": 50, "sensor_id": 3}
-- List TCP sensors: {"action": "list_tcp", "agent_id": 5, "device_id": 50}
-- Available trigger functions: {"action": "snmp_trigger_functions", "agent_id": 5, "device_id": 50, "sensor_id": 3}`,
+- Get trigger functions: {"action": "snmp_trigger_functions", "agent_id": 5, "device_id": 50, "sensor_id": 3}
+- Create trigger (alert when value > 90): {"action": "create_snmp_trigger", "agent_id": 5, "device_id": 50, "sensor_id": 3, "body": {"function_id": 2, "value": "90"}}
+- Activate email alert on trigger: {"action": "create_snmp_trigger_alert", "agent_id": 5, "device_id": 50, "sensor_id": 3, "trigger_id": 1, "medium_name": "email"}
+- List TCP sensors: {"action": "list_tcp", "agent_id": 5, "device_id": 50}`,
   inputSchema: {
     type: 'object',
     properties: {
