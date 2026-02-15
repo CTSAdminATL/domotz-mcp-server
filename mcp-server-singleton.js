@@ -88,3 +88,4 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   }
 });
 
+export { server };
