@@ -13,6 +13,10 @@ import { server } from "./mcp-server-singleton.js";
 const app = express();
 app.use(express.json({ limit: "2mb" }));
 
+app.get("/mcp", (_req, res) => {
+  res.status(200).send("ok");
+});
+
 app.post("/mcp", async (req, res) => {
   const transport = new StreamableHTTPServerTransport({
     sessionIdGenerator: () => randomUUID(),
